@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand palette — earthy greens and ambers */
+  --brand-forest:  #2D6A4F;
+  --brand-leaf:    #52B788;
+  --brand-sprout:  #B7E4C7;
+  --brand-amber:   #E09F3E;
+  --brand-ember:   #C1121F;
+  --brand-sky:     #48CAE4;
+  --brand-soil:    #4A3728;
+  --brand-sand:    #F4E3D7;
+
+  /* Calendar semantic colors */
+  --cal-green:  #52B788;
+  --cal-blue:   #48CAE4;
+  --cal-amber:  #E09F3E;
+  --cal-red:    #C1121F;
+  --cal-gray:   #C9C9C9;
+
+  /* Surfaces */
+  --bg-primary: #F4E3D7;
+  --bg-card:    rgba(255, 255, 255, 0.82);
+  --bg-nav:     rgba(255, 255, 255, 0.95);
+  --text-primary:   #2C1A0E;
+  --text-secondary: #6B4C38;
+  --border-color:   rgba(74, 55, 40, 0.12);
+
+  /* Radius & shadow */
+  --radius-card: 20px;
+  --shadow-card: 0 2px 16px rgba(74, 55, 40, 0.1);
+}
+
+[data-theme="dark"] {
+  --bg-primary:   #1A1510;
+  --bg-card:      rgba(36, 28, 22, 0.92);
+  --bg-nav:       rgba(28, 22, 16, 0.97);
+  --text-primary: #F4E3D7;
+  --text-secondary: #C4A882;
+  --border-color: rgba(244, 227, 215, 0.1);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* Safe area padding for notched phones */
+#root {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Smooth scrolling */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Remove number input spinners */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
