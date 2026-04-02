@@ -8,12 +8,13 @@ export function useDayRecord(dateKey: string) {
   const update = async (partial: Partial<DailyRecord>) => {
     const merged = { ...(record ?? {}), ...partial }
     mutate(merged as DailyRecord, false)
-    await fetch(`/api/records/${dateKey}`, {
+    const res = await fetch(`/api/records/${dateKey}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(merged),
     })
-    mutate()
+    const updated = await res.json()
+    mutate(updated, false)
   }
 
   return { record: record ?? null, update, dateKey, isLoading }
