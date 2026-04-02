@@ -4,7 +4,7 @@ const MESSAGES: Record<CalendarColor | 'default', string[]> = {
   green: ["Nannayirunnu! Perfect day! 💪","Kollam! Gym cheythu, vellam kudich, junk illaa! 🌿","Adipoli! Keep going da! 🔥"],
   blue:  ["Balanced! Gym cheythu kazhichu — that's the deal! 😎","Treat earned! Gym cheytha sthalathinu credit kitto! 💪"],
   amber: ["Okay okay, tomorrow try cheyyam! 🌅","Oru day thetti, but it's fine! Reset aavaam! ✨"],
-  red:   ["Sherikkum? Oru kali aanu... 😅","Aayi, no gym, junk food, sugar — oru fresh start koodiyallo! 🌱"],
+  red:   ["Sherikkum? Oru kadi aanu... 😅","Aayi, no gym, junk food, sugar — oru fresh start koodiyallo! 🌱"],
   gray:  ["Rest day! Body also needs recovery! 🛌","Rest is part of the plan! 😴"],
   default: ["Enthayee innu? Fill in your day! ✏️","Check in cheyyoo! Takes only 10 seconds! ⚡"],
 }

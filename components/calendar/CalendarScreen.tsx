@@ -41,7 +41,7 @@ export function CalendarScreen() {
 
   return (
     <div>
-      <PageHeader title="Balance Calendar" subtitle="Ee maasam enthu nadanthu?" />
+      <PageHeader title="Balance Calendar" subtitle="Ee maasam enthua nadanne?" />
 
       <div style={{ padding: '16px 16px 24px' }}>
         {/* Month nav */}
