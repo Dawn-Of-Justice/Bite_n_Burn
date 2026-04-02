@@ -143,7 +143,7 @@ export function SettingsScreen() {
 
         {/* Sign out */}
         <button
-          onClick={() => signOut()}
+          onClick={() => signOut({ redirectUrl: '/' })}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'rgba(193,18,31,0.1)', border: '1px solid rgba(193,18,31,0.2)', borderRadius: 14, padding: '14px', cursor: 'pointer', color: 'var(--brand-ember)', fontWeight: 700, fontSize: 14 }}
         >
           <LogOut size={18} />

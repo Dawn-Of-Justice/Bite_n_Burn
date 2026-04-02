@@ -15,7 +15,7 @@ export function SWRProvider({ children }: { children: React.ReactNode }) {
         dedupingInterval: 10_000,
         onError(error) {
           if (error instanceof FetchError && error.status === 401) {
-            signOut()
+            signOut({ redirectUrl: '/' })
           }
         },
       }}
