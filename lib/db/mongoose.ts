@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'
+import { attachDatabasePool } from '@vercel/functions'
 
 const MONGODB_URI = process.env.MONGODB_URI!
 
 if (!MONGODB_URI) throw new Error('Missing MONGODB_URI environment variable')
 
-// Cache the connection across hot reloads in development
 declare global {
   // eslint-disable-next-line no-var
   var _mongooseCache: { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null }
@@ -19,5 +19,8 @@ export async function connectDB() {
     cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false })
   }
   cached.conn = await cached.promise
+  // Attach the underlying MongoClient so Vercel can manage the connection pool
+  // across function suspends/resumes, preventing connection exhaustion
+  attachDatabasePool(cached.conn.connection.getClient())
   return cached.conn
 }
