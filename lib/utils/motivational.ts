@@ -6,7 +6,7 @@ const MESSAGES: Record<CalendarColor | 'default', string[]> = {
   amber: ["Okay okay, tomorrow try cheyyam! 🌅","Oru day thetti, but it's fine! Reset aavaam! ✨"],
   red:   ["Sherikkum? Oru kali aanu... 😅","Aayi, no gym, junk food, sugar — oru fresh start koodiyallo! 🌱"],
   gray:  ["Rest day! Body also needs recovery! 🛌","Rest is part of the plan! 😴"],
-  default: ["Enthayee aaj? Fill in your day! ✏️","Check in cheyyoo! Takes only 10 seconds! ⚡"],
+  default: ["Enthayee innu? Fill in your day! ✏️","Check in cheyyoo! Takes only 10 seconds! ⚡"],
 }
 
 export function getMotivationalMessage(color?: CalendarColor | null): string {

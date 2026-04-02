@@ -36,7 +36,7 @@ export function CheckInScreen() {
         <div style={{ marginBottom: 16 }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>{dayStr}</p>
           <h2 style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-            {record?.completedAt ? 'Check-in done! 🎉' : 'Enthayee aaj? ✏️'}
+            {record?.completedAt ? 'Check-in done! 🎉' : 'Enthayee innu? ✏️'}
           </h2>
         </div>
 

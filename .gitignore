@@ -11,3 +11,8 @@ out/
 *.pem
 .vite/
 tsconfig.tsbuildinfo
+
+.vercel
+.env*.local
+
+.claude
