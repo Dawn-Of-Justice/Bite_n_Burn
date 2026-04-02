@@ -21,5 +21,7 @@ export async function GET(req: NextRequest) {
     records = await Record.find({ userId }).sort({ dateKey: 1 }).lean()
   }
 
-  return NextResponse.json(records)
+  return NextResponse.json(records, {
+    headers: { 'Cache-Control': 'private, max-age=60, stale-while-revalidate=30' },
+  })
 }

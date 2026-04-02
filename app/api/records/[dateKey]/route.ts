@@ -11,7 +11,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ dat
   const { dateKey } = await params
   await connectDB()
   const record = await Record.findOne({ userId, dateKey }).lean()
-  return NextResponse.json(record ?? null)
+  return NextResponse.json(record ?? null, {
+    headers: { 'Cache-Control': 'private, max-age=30, stale-while-revalidate=10' },
+  })
 }
 
 // PUT /api/records/[dateKey]  — upsert

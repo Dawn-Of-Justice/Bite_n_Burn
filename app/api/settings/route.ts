@@ -21,7 +21,9 @@ export async function GET() {
     settings = settings.toObject()
   }
 
-  return NextResponse.json(settings)
+  return NextResponse.json(settings, {
+    headers: { 'Cache-Control': 'private, max-age=300, stale-while-revalidate=60' },
+  })
 }
 
 // PUT /api/settings

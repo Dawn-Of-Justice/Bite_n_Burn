@@ -2,10 +2,11 @@
 import useSWR from 'swr'
 import type { EarnedBadge } from '@/lib/types/badges'
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
-
 export function useBadges() {
-  const { data, mutate } = useSWR<EarnedBadge[]>('/api/badges', fetcher)
+  const { data, mutate } = useSWR<EarnedBadge[]>('/api/badges', {
+    revalidateIfStale: false,
+    revalidateOnMount: true,
+  })
 
   const earnBadge = async (badgeId: string) => {
     await fetch(`/api/badges/${badgeId}`, { method: 'POST' })

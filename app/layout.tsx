@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { ClerkProvider, Show, UserButton } from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
+import { SWRProvider } from '@/components/providers/SWRProvider'
 import '../styles/design-system.css'
 
 export const metadata: Metadata = {
@@ -21,7 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <ClerkProvider>
-          {children}
+          <SWRProvider>
+            {children}
+          </SWRProvider>
         </ClerkProvider>
       </body>
     </html>
