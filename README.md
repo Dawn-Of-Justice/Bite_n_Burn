@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bite n Burn
 
-## Getting Started 
+Bite n Burn is a high-performance, full-stack habit tracking and wellness web application designed to deliver an engaging user experience through data-driven insights and gamification. Built with a robust modern technology stack, it emphasizes scalable architecture, algorithmic efficiency, and seamless cross-device accessibility.
 
-First, run the development server:
+## Core Architecture and Technologies
 
+- Frontend Framework: React and Next.js (App Router) for optimized server-side rendering (SSR) and client-side interactivity.
+- Language: TypeScript for strict type safety and scalable enterprise-grade code maintainability.
+- Backend API Integration: Next.js API Routes architected to serve decoupled RESTful endpoints, minimizing latency and maximizing throughput.
+- Database: MongoDB with Mongoose ODM for flexible, scalable schema design and efficient data querying.
+- State Management: SWR for highly optimized, stale-while-revalidate data fetching and client-side caching.
+- Component Design: Responsive, mobile-first component architecture utilizing a centralized design system.
+
+## Technical Highlights
+
+### Algorithmic Gamification Engine
+Engineered custom algorithms to handle complex state calculations with minimal operational overhead:
+- Streak Evaluation: Evaluates user engagement over time, handling edge cases and temporal shifts with efficient date algorithms.
+- Progressive State Rendering: Calculates virtual plant growth stages based on aggregated user metrics, driving dynamic conditional UI rendering.
+- Achievement System: Scalable badge evaluation system analyzing criteria across historical user data points.
+
+### Scalable Data Management
+- Structured document models ensuring data integrity and rapid read/write operations.
+- Well-defined boundaries between data access logic and business rules.
+
+### Component-Driven Development
+- Modular, highly reusable React component architecture with strict separation of concerns.
+- Decoupled presentational components from custom business logic hooks (`useBadges`, `useStreak`, `useTodayRecord`).
+- Optimized rendering cycles prioritizing Core Web Vitals (LCP, FID, CLS).
+
+## Getting Started
+
+### Prerequisites
+- Node.js environment
+- Running MongoDB instance
+
+### Installation & Execution
+
+1. Install project dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Establish necessary `.env.local` configurations (e.g., `MONGODB_URI`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Boot the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) with a browser to inspect the application.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Continuous Integration and Delivery
+The application targets edge-computing platforms for rapid deployment, leveraging globally distributed CDNs for static assets and edge functions for the API layer. This infrastructure choice guarantees optimized TTFB (Time to First Byte) and adherence to stringent performance benchmarks.
