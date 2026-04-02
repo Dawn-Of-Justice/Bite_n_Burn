@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { CheckSquare, CalendarDays, Sprout, BarChart3, Settings } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { to: '/', icon: CheckSquare, label: "Aaj's" },
+  { to: '/', icon: CheckSquare, label: "innu's" },
   { to: '/calendar', icon: CalendarDays, label: 'Calendar' },
   { to: '/plant', icon: Sprout, label: 'Plant' },
   { to: '/stats', icon: BarChart3, label: 'Stats' },
@@ -38,6 +38,7 @@ export function BottomNav() {
           <Link
             key={to}
             href={to}
+            prefetch={false}
             style={{
               display: 'flex',
               flexDirection: 'column',
