@@ -3,10 +3,7 @@ import useSWR from 'swr'
 import type { UserSettings } from '@/lib/types/settings'
 
 export function useSettings() {
-  const { data: settings, mutate, isLoading } = useSWR<UserSettings>('/api/settings', {
-    revalidateIfStale: false,
-    revalidateOnMount: true,
-  })
+  const { data: settings, mutate, isLoading } = useSWR<UserSettings>('/api/settings')
 
   const update = async (partial: Partial<Omit<UserSettings, 'id' | 'userId' | 'createdAt'>>) => {
     mutate({ ...settings!, ...partial }, false)

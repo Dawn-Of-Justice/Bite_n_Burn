@@ -21,6 +21,9 @@ export async function connectDB() {
   cached.conn = await cached.promise
   // Attach the underlying MongoClient so Vercel can manage the connection pool
   // across function suspends/resumes, preventing connection exhaustion
-  attachDatabasePool(cached.conn.connection.getClient())
+  // Only use attachDatabasePool in Vercel production environment
+  if (process.env.VERCEL) {
+    attachDatabasePool(cached.conn.connection.getClient())
+  }
   return cached.conn
 }
