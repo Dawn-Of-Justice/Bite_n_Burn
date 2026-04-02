@@ -20,7 +20,7 @@ export function DayDetailModal({ record, settings, onClose }: Props) {
   const rows = [
     { icon: <Dumbbell size={16} />, label: 'Gym (Poyo?)', value: record.isRestDay ? 'Rest Day 😴' : record.didGym === true ? 'Poyi! 💪' : record.didGym === false ? 'Poyilla 😅' : '—' },
     { icon: <UtensilsCrossed size={16} />, label: 'Junk Food (Kazhicho?)', value: record.ateJunk === true ? 'Kazhichu 😅' : record.ateJunk === false ? 'Illa! 💪' : '—' },
-    { icon: <UtensilsCrossed size={16} />, label: 'Sugar Exceeded?', value: record.exceededSugar === true ? 'Koode kazhichu 😬' : record.exceededSugar === false ? 'Control! 👍' : '—' },
+    { icon: <UtensilsCrossed size={16} />, label: 'Sugar Exceeded?', value: record.exceededSugar === true ? 'Kooduthal kazhichu 😬' : record.exceededSugar === false ? 'Control! 👍' : '—' },
     { icon: <Droplets size={16} />, label: 'Water (Vellam?)', value: record.waterCount > 0 ? `${record.waterCount} ${settings.waterGoalUnit === 'liters' ? 'units' : 'glasses'}` : '0' },
   ];
 

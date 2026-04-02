@@ -61,7 +61,7 @@ export function KazhichoCard({ record, settings, onUpdate }: Props) {
         <ToggleButton
           value={record.exceededSugar ?? null}
           onChange={(val) => onUpdate({ exceededSugar: val })}
-          labelYes="Koode kazhichu 😬"
+          labelYes="Kooduthal kazhichu 😬"
           labelNo="Control! 👍"
         />
       </div>
