@@ -49,7 +49,7 @@ export function StatsScreen() {
 
   return (
     <div>
-      <PageHeader title="Stats & Progress" subtitle="Ente journey kano?" />
+      <PageHeader title="Stats & Progress" subtitle="Ente journey kando?" />
 
       <div style={{ padding: '16px 16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
         {/* Motivational message */}

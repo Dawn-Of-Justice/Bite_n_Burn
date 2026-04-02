@@ -26,7 +26,7 @@ export function PlantScreen() {
 
   return (
     <div>
-      <PageHeader title="Ninte Maram 🌳" subtitle="Ente progress kano?" />
+      <PageHeader title="Ninte Maram 🌳" subtitle="Ente progress kando?" />
 
       <div style={{ padding: '16px 16px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         {/* Plant display */}
