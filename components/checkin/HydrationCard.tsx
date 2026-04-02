@@ -3,6 +3,7 @@ import { Card } from '@/components/common/Card';
 import { TapCounter } from '@/components/common/TapCounter';
 import type { DailyRecord } from '@/lib/types/records';
 import type { UserSettings } from '@/lib/types/settings';
+import { hasMetWaterGoal } from '@/lib/utils/water';
 
 interface Props {
   record: Partial<DailyRecord>;
@@ -12,7 +13,7 @@ interface Props {
 
 export function HydrationCard({ record, settings, onUpdate }: Props) {
   const count = record.waterCount ?? 0;
-  const met = count >= settings.waterGoalValue;
+  const met = hasMetWaterGoal(count, settings);
 
   return (
     <Card>

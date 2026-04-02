@@ -3,7 +3,11 @@ import { Flame, Snowflake } from 'lucide-react';
 import { useSettings } from '@/hooks/useSettings';
 import { useStreak } from '@/hooks/useStreak';
 
-export function DailySummaryBar() {
+interface Props {
+  viewingYesterday?: boolean;
+}
+
+export function DailySummaryBar({ viewingYesterday }: Props) {
   const { settings } = useSettings();
   const { currentStreak } = useStreak(settings ?? undefined);
 
@@ -20,8 +24,13 @@ export function DailySummaryBar() {
       top: 0,
       zIndex: 10,
     }}>
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontSize: 22, fontWeight: 800, color: 'var(--brand-forest)' }}>Bite & Burn</span>
+        {viewingYesterday && (
+          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand-sky)', background: 'rgba(72,202,228,0.15)', borderRadius: 20, padding: '2px 8px' }}>
+            Yesterday
+          </span>
+        )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         {settings && settings.streakFreezeTokens > 0 && (

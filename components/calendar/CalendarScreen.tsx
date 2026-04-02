@@ -74,6 +74,8 @@ export function CalendarScreen() {
             const future = isFuture(parseISO(dateKey)) && dateKey !== format(today, 'yyyy-MM-dd');
             const todayFlag = isTodayFn(parseISO(dateKey));
 
+            const isPastEmpty = !record && !future && !todayFlag;
+
             return (
               <CalendarDay
                 key={dateKey}
@@ -81,6 +83,7 @@ export function CalendarScreen() {
                 color={color}
                 isToday={todayFlag}
                 isFuture={future}
+                isPastEmpty={isPastEmpty}
                 onClick={record && !future ? () => setSelected(record) : undefined}
               />
             );

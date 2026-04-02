@@ -13,6 +13,15 @@ interface Props {
 }
 
 export function KazhichoCard({ record, settings, onUpdate }: Props) {
+  const eaten = record.junkItemsEaten ?? [];
+
+  const toggleItem = (item: string) => {
+    const next = eaten.includes(item)
+      ? eaten.filter(i => i !== item)
+      : [...eaten, item];
+    onUpdate({ junkItemsEaten: next });
+  };
+
   return (
     <Card>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
@@ -36,19 +45,33 @@ export function KazhichoCard({ record, settings, onUpdate }: Props) {
             exit={{ height: 0, opacity: 0 }}
             style={{ overflow: 'hidden' }}
           >
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-              {settings.customJunkItems.map(item => (
-                <span key={item} style={{
-                  background: 'rgba(224,159,62,0.15)',
-                  color: 'var(--brand-amber)',
-                  borderRadius: 20,
-                  padding: '3px 10px',
-                  fontSize: 12,
-                  fontWeight: 600,
-                }}>
-                  {item}
-                </span>
-              ))}
+            <p style={{ margin: '12px 0 6px', fontSize: 11, color: 'var(--text-secondary)', fontWeight: 600 }}>
+              Enthanu kazhichu? Tap to mark:
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {settings.customJunkItems.map(item => {
+                const selected = eaten.includes(item);
+                return (
+                  <motion.button
+                    key={item}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => toggleItem(item)}
+                    style={{
+                      background: selected ? 'var(--brand-amber)' : 'rgba(224,159,62,0.12)',
+                      color: selected ? '#fff' : 'var(--brand-amber)',
+                      border: `1.5px solid ${selected ? 'var(--brand-amber)' : 'rgba(224,159,62,0.3)'}`,
+                      borderRadius: 20,
+                      padding: '4px 12px',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {item}
+                  </motion.button>
+                );
+              })}
             </div>
           </motion.div>
         )}

@@ -8,13 +8,18 @@ interface Props {
   color: CalendarColor | null;
   isToday: boolean;
   isFuture: boolean;
+  isPastEmpty?: boolean;
   onClick?: () => void;
 }
 
-export function CalendarDay({ day, color, isToday, isFuture, onClick }: Props) {
+export function CalendarDay({ day, color, isToday, isFuture, isPastEmpty, onClick }: Props) {
   if (!day) return <div />;
 
   const colorStyle = color ? COLOR_STYLES[color] : null;
+
+  let border = '2px solid transparent';
+  if (isToday) border = '2px solid var(--brand-forest)';
+  else if (isPastEmpty) border = '2px dashed var(--border-color)';
 
   return (
     <motion.div
@@ -30,7 +35,7 @@ export function CalendarDay({ day, color, isToday, isFuture, onClick }: Props) {
         cursor: onClick ? 'pointer' : 'default',
         position: 'relative',
         opacity: isFuture ? 0.3 : 1,
-        border: isToday ? '2px solid var(--brand-forest)' : '2px solid transparent',
+        border,
         background: colorStyle ? colorStyle.bg : 'transparent',
         transition: 'background 0.2s',
       }}

@@ -1,5 +1,6 @@
 import type { DailyRecord, CalendarColor } from '@/lib/types/records'
 import type { UserSettings } from '@/lib/types/settings'
+import { hasMetWaterGoal } from '@/lib/utils/water'
 
 export function computeCalendarColor(
   record: DailyRecord | null | undefined,
@@ -19,7 +20,7 @@ export function computeCalendarColor(
   const didGym = record.didGym === true
   const ateJunk = record.ateJunk === true
   const exceededSugar = record.exceededSugar === true
-  const metWaterGoal = record.waterCount >= settings.waterGoalValue
+  const metWaterGoal = hasMetWaterGoal(record.waterCount, settings)
 
   if (didGym && metWaterGoal && !ateJunk) return 'green'
   if (didGym && ateJunk && !exceededSugar) return 'blue'

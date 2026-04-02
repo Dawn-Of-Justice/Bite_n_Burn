@@ -1,6 +1,6 @@
 'use client'
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Dumbbell, UtensilsCrossed, Droplets, BedDouble } from 'lucide-react';
+import { X, Dumbbell, UtensilsCrossed, Droplets } from 'lucide-react';
 import type { DailyRecord } from '@/lib/types/records';
 import type { UserSettings } from '@/lib/types/settings';
 import { computeCalendarColor, COLOR_STYLES } from '@/lib/algorithms/calendarColor';
@@ -17,11 +17,15 @@ export function DayDetailModal({ record, settings, onClose }: Props) {
   const color = computeCalendarColor(record, settings);
   const style = COLOR_STYLES[color];
 
+  const waterDisplay = settings.waterGoalUnit === 'liters'
+    ? `${(record.waterCount * 0.25).toFixed(1)}L`
+    : `${record.waterCount} glasses`;
+
   const rows = [
     { icon: <Dumbbell size={16} />, label: 'Gym (Poyo?)', value: record.isRestDay ? 'Rest Day 😴' : record.didGym === true ? 'Poyi! 💪' : record.didGym === false ? 'Poyilla 😅' : '—' },
     { icon: <UtensilsCrossed size={16} />, label: 'Junk Food (Kazhicho?)', value: record.ateJunk === true ? 'Kazhichu 😅' : record.ateJunk === false ? 'Illa! 💪' : '—' },
     { icon: <UtensilsCrossed size={16} />, label: 'Sugar Exceeded?', value: record.exceededSugar === true ? 'Kooduthal kazhichu 😬' : record.exceededSugar === false ? 'Control! 👍' : '—' },
-    { icon: <Droplets size={16} />, label: 'Water (Vellam?)', value: record.waterCount > 0 ? `${record.waterCount} ${settings.waterGoalUnit === 'liters' ? 'units' : 'glasses'}` : '0' },
+    { icon: <Droplets size={16} />, label: 'Water (Vellam?)', value: record.waterCount > 0 ? waterDisplay : '0' },
   ];
 
   return (
@@ -61,6 +65,20 @@ export function DayDetailModal({ record, settings, onClose }: Props) {
                 <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{value}</span>
               </div>
             ))}
+
+            {record.junkItemsEaten && record.junkItemsEaten.length > 0 && (
+              <div style={{ padding: '10px 14px', background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-color)' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>What was eaten:</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {record.junkItemsEaten.map(item => (
+                    <span key={item} style={{ background: 'var(--brand-amber)', color: '#fff', borderRadius: 20, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {record.gutFeeling && (
               <div style={{ textAlign: 'center', fontSize: 32, paddingTop: 8 }}>
                 {record.gutFeeling === 'great' ? '😄' : record.gutFeeling === 'okay' ? '😐' : '😩'}

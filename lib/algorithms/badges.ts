@@ -1,5 +1,6 @@
 import type { DailyRecord, CalendarColor } from '@/lib/types/records';
 import type { UserSettings } from '@/lib/types/settings';
+import { hasMetWaterGoal } from '@/lib/utils/water';
 import type { EarnedBadge } from '@/lib/types/badges';
 import { BADGE_DEFINITIONS } from '@/lib/types/badges';
 import { computeCalendarColor } from '@/lib/algorithms/calendarColor';
@@ -29,7 +30,7 @@ function buildStats(records: DailyRecord[], settings: UserSettings): Stats {
     if (c === 'green') greenDays++;
     if (c === 'blue') blueDays++;
     if (r.didGym) gymDays++;
-    if (r.waterCount >= settings.waterGoalValue) waterGoalDays++;
+    if (hasMetWaterGoal(r.waterCount, settings)) waterGoalDays++;
   }
 
   const { currentStreak, longestStreak } = computeStreak(records, settings);
