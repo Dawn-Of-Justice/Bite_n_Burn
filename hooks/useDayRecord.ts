@@ -1,5 +1,5 @@
 'use client'
-import useSWR from 'swr'
+import useSWR, { mutate as globalMutate } from 'swr'
 import type { DailyRecord } from '@/lib/types/records'
 
 export function useDayRecord(dateKey: string) {
@@ -15,6 +15,10 @@ export function useDayRecord(dateKey: string) {
     })
     const updated = await res.json()
     mutate(updated, false)
+
+    // Revalidate calendar month caches so changes appear immediately
+    const month = dateKey.slice(0, 7) // "YYYY-MM"
+    globalMutate(`/api/records?month=${month}`)
   }
 
   return { record: record ?? null, update, dateKey, isLoading }

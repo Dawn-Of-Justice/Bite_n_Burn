@@ -1,8 +1,8 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format, subDays } from 'date-fns';
-import { motion } from 'framer-motion';
-import { Snowflake } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Snowflake, Check } from 'lucide-react';
 import { DailySummaryBar } from '@/components/checkin/DailySummaryBar';
 import { KazhichoCard } from '@/components/checkin/KazhichoCard';
 import { PoyoCard } from '@/components/checkin/PoyoCard';
@@ -10,7 +10,7 @@ import { HydrationCard } from '@/components/checkin/HydrationCard';
 import { GutFeelingCard } from '@/components/checkin/GutFeelingCard';
 import { useDayRecord } from '@/hooks/useDayRecord';
 import { useSettings } from '@/hooks/useSettings';
-import { defaultDailyRecord } from '@/lib/types/records';
+import { defaultDailyRecord, type DailyRecord } from '@/lib/types/records';
 import { todayKey, yesterdayKey } from '@/lib/utils/date';
 
 const stagger = {
@@ -50,6 +50,17 @@ export function CheckInScreen() {
   const record = activeDay === 'today' ? todayRecord : yesterdayRecord;
   const update = activeDay === 'today' ? todayUpdate : yesterdayUpdate;
   const r = record ?? defaultDailyRecord(activeKey);
+
+  // Saved toast
+  const [showSaved, setShowSaved] = useState(false);
+  const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const onUpdate = async (partial: Partial<DailyRecord>) => {
+    await update(partial);
+    setShowSaved(true);
+    clearTimeout(savedTimer.current);
+    savedTimer.current = setTimeout(() => setShowSaved(false), 1500);
+  };
 
   const displayDate = activeDay === 'today' ? new Date() : subDays(new Date(), 1);
   const dayStr = format(displayDate, 'EEEE, MMM d');
@@ -151,18 +162,49 @@ export function CheckInScreen() {
 
         <motion.div variants={stagger} initial="initial" animate="animate" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <motion.div variants={cardAnim}>
-            <PoyoCard record={r} onUpdate={update} />
+            <PoyoCard record={r} onUpdate={onUpdate} />
           </motion.div>
           <motion.div variants={cardAnim}>
-            <KazhichoCard record={r} settings={settings} onUpdate={update} />
+            <KazhichoCard record={r} settings={settings} onUpdate={onUpdate} />
           </motion.div>
           <motion.div variants={cardAnim}>
-            <HydrationCard record={r} settings={settings} onUpdate={update} />
+            <HydrationCard record={r} settings={settings} onUpdate={onUpdate} />
           </motion.div>
           <motion.div variants={cardAnim}>
-            <GutFeelingCard record={r} onUpdate={update} />
+            <GutFeelingCard record={r} onUpdate={onUpdate} />
           </motion.div>
         </motion.div>
+
+        {/* Saved toast */}
+        <AnimatePresence>
+          {showSaved && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              style={{
+                position: 'fixed',
+                bottom: 88,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 50,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                background: 'var(--brand-forest)',
+                color: '#fff',
+                padding: '8px 18px',
+                borderRadius: 50,
+                fontSize: 13,
+                fontWeight: 700,
+                boxShadow: '0 4px 16px rgba(45,106,79,0.25)',
+                pointerEvents: 'none',
+              }}
+            >
+              <Check size={14} /> Saved
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

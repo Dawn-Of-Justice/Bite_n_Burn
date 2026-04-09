@@ -132,6 +132,8 @@ export function SettingsScreen() {
           ))}
         </Card>
 
+        {/* [WHATSAPP] Reminders card — re-enable when WhatsApp integration is ready */}
+
         {/* Streak freeze info */}
         <Card>
           <h4 style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 800, color: 'var(--text-secondary)' }}>STREAK FREEZE TOKENS</h4>

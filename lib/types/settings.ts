@@ -19,6 +19,9 @@ export interface UserSettings {
   morningReminderTime: string; // "08:00"
   eveningReminderEnabled: boolean;
   eveningReminderTime: string; // "21:00"
+  whatsappNumber: string; // E.164 digits only, e.g. "919876543210"
+  timezone: string; // IANA timezone, e.g. "Asia/Kolkata"
+  lastReminderDate: string | null; // "YYYY-MM-DD" — dedup, set by cron
 
   // Theme
   theme: 'light' | 'dark' | 'system';
@@ -43,6 +46,9 @@ export const defaultSettings = (userId: string, name: string): UserSettings => (
   morningReminderTime: '08:00',
   eveningReminderEnabled: true,
   eveningReminderTime: '21:00',
+  whatsappNumber: '',
+  timezone: 'Asia/Kolkata',
+  lastReminderDate: null,
   theme: 'system',
   streakFreezeTokens: 0,
   onboardingCompleted: false,
