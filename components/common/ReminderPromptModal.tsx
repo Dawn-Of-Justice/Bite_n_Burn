@@ -28,7 +28,7 @@ export function ReminderPromptModal({ onDone }: Props) {
       return;
     }
     setSaving(true);
-    await update({ whatsappNumber: digits, eveningReminderEnabled: true });
+    await update({ fcmToken: digits, eveningReminderEnabled: true });
     onDone();
   };
 
