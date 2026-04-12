@@ -18,7 +18,7 @@ export async function POST() {
 
   const message = `Hey ${settings.name || 'Friend'}! Innu log cheythilla — Bite & Burn update cheyyaan time aayi! 💪`
   const results = await Promise.all(
-    settings.fcmTokens.map(token => sendPushNotification(token, 'Bite & Burn', message))
+    settings.fcmTokens.map((token: string) => sendPushNotification(token, 'Bite & Burn', message))
   )
 
   const failed = results.filter(r => !r.ok)
