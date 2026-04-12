@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/common/Card'
 import { useSettings } from '@/hooks/useSettings'
-import { requestFCMToken } from '@/lib/firebase-client'
+import { requestFCMToken, setupForegroundMessages } from '@/lib/firebase-client'
 
 export function NotificationsCard() {
   const { settings, update } = useSettings()
@@ -15,6 +15,13 @@ export function NotificationsCard() {
   useEffect(() => {
     setSupported('Notification' in window && 'serviceWorker' in navigator)
   }, [])
+
+  // Set up foreground message handler whenever notifications are enabled
+  useEffect(() => {
+    if (!settings?.fcmToken) return
+    const unsub = setupForegroundMessages()
+    return unsub
+  }, [settings?.fcmToken])
 
   // Don't render during SSR or if browser lacks support
   if (supported === null || !supported || !settings) return null
