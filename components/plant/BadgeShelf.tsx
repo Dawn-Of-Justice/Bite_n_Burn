@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useBadges } from '@/hooks/useBadges'
 
 import { BADGE_DEFINITIONS } from '@/lib/types/badges';
@@ -26,9 +27,28 @@ export function BadgeShelf() {
         Achievements 🏆
       </h4>
       {badges.length === 0 && (
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>
-          Start checking in to earn badges! Kollam aavum! 🌱
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '12px 0 4px', textAlign: 'center' }}>
+          <div style={{ fontSize: 40 }}>🏆</div>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: 'var(--text-primary)' }}>No badges yet</p>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            Start checking in to earn achievements. Kollam aavum!
+          </p>
+          <Link
+            href="/"
+            style={{
+              marginTop: 4,
+              background: 'var(--brand-amber)',
+              color: '#fff',
+              textDecoration: 'none',
+              padding: '8px 20px',
+              borderRadius: 50,
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            Start →
+          </Link>
+        </div>
       )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
         {BADGE_DEFINITIONS.map(def => {
