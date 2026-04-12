@@ -8,6 +8,7 @@ export function NotificationsCard() {
   const { settings, update } = useSettings()
   const [supported, setSupported] = useState<boolean | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setSupported('Notification' in window && 'serviceWorker' in navigator)
@@ -21,9 +22,20 @@ export function NotificationsCard() {
 
   const handleEnable = async () => {
     setLoading(true)
-    const token = await requestFCMToken()
-    if (token) update({ fcmToken: token })
-    setLoading(false)
+    setError(null)
+    try {
+      const token = await requestFCMToken()
+      if (token) {
+        await update({ fcmToken: token })
+      } else {
+        setError('Permission denied or browser unsupported.')
+      }
+    } catch (err) {
+      console.error('Failed to enable notifications:', err)
+      setError('Failed to enable. Check console for details.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleDisable = () => update({ fcmToken: '' })
@@ -53,13 +65,20 @@ export function NotificationsCard() {
               Disable Notifications
             </button>
           ) : (
-            <button
-              onClick={handleEnable}
-              disabled={loading}
-              style={{ width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'var(--brand-forest)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.7 : 1 }}
-            >
-              {loading ? 'Enabling…' : 'Enable Notifications'}
-            </button>
+            <>
+              <button
+                onClick={handleEnable}
+                disabled={loading}
+                style={{ width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'var(--brand-forest)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.7 : 1 }}
+              >
+                {loading ? 'Enabling…' : 'Enable Notifications'}
+              </button>
+              {error && (
+                <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-error, #e53e3e)', textAlign: 'center' }}>
+                  {error}
+                </p>
+              )}
+            </>
           )}
         </>
       )}
