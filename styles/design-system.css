@@ -76,7 +76,7 @@ input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
-/* Skeleton shimmer animation */
+/* Skeleton shimmer animation — left-to-right matches iOS/Material convention */
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }

@@ -16,12 +16,12 @@ const GUT_EMOJI: Record<GutFeeling, string> = { great: '😄', okay: '😐', rou
 
 export function StatsScreen() {
   const { settings } = useSettings();
-  const records = useAllRecords()
+  const { records, isLoading: recordsLoading } = useAllRecords()
   const { currentStreak, longestStreak } = useStreak(settings ?? undefined);
 
   if (!settings) return <StatsSkeleton />;
 
-  if (records.length === 0) {
+  if (!recordsLoading && records.length === 0) {
     return (
       <div>
         <PageHeader title="Stats & Progress" subtitle="Ente journey kando?" />

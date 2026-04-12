@@ -24,7 +24,7 @@ export function BadgeShelf() {
   return (
     <Card>
       <h4 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
-        Achievements 🏆
+        Achievements
       </h4>
       {badges.length === 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '12px 0 4px', textAlign: 'center' }}>
