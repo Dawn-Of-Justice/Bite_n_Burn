@@ -9,9 +9,7 @@ export function NotificationsCard() {
   const [supported, setSupported] = useState<boolean | null>(null)
   const [thisToken, setThisToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [testing, setTesting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [testResult, setTestResult] = useState<string | null>(null)
 
   useEffect(() => {
     setSupported('Notification' in window && 'serviceWorker' in navigator)
@@ -66,25 +64,7 @@ export function NotificationsCard() {
     update({ eveningReminderTime: e.target.value })
   }
 
-  const handleTestPush = async () => {
-    setTesting(true)
-    setTestResult(null)
-    try {
-      const res = await fetch('/api/test-push', { method: 'POST' })
-      if (res.ok) {
-        setTestResult('Sent! Check your notifications.')
-      } else {
-        const data = await res.json()
-        setTestResult(`Failed: ${data.error}`)
-      }
-    } catch {
-      setTestResult('Network error.')
-    } finally {
-      setTesting(false)
-    }
-  }
-
-  return (
+return (
     <Card>
       <h4 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 800, color: 'var(--text-secondary)' }}>
         REMINDERS
@@ -121,26 +101,12 @@ export function NotificationsCard() {
           )}
 
           {thisDeviceEnabled ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <button
-                onClick={handleTestPush}
-                disabled={testing}
-                style={{ width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'var(--brand-forest)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: testing ? 'default' : 'pointer', opacity: testing ? 0.7 : 1 }}
-              >
-                {testing ? 'Sending…' : 'Send Test Notification'}
-              </button>
-              {testResult && (
-                <p style={{ margin: 0, fontSize: 12, color: testResult.startsWith('Sent') ? 'var(--brand-forest)' : 'var(--color-error, #e53e3e)', textAlign: 'center' }}>
-                  {testResult}
-                </p>
-              )}
-              <button
-                onClick={handleDisable}
-                style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-secondary)', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
-              >
-                Disable on This Device
-              </button>
-            </div>
+            <button
+              onClick={handleDisable}
+              style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-secondary)', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+            >
+              Disable on This Device
+            </button>
           ) : (
             <>
               <button
