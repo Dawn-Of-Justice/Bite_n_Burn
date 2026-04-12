@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db/mongoose'
 import { Settings } from '@/lib/db/models/Settings'
 import { Record } from '@/lib/db/models/Record'
-import { sendWhatsAppText } from '@/lib/services/whatsapp'
+import { sendPushNotification } from '@/lib/services/push'
 
 function getNowInTZ(tz: string) {
   const fmt = (opt: Intl.DateTimeFormatOptions) =>
@@ -14,9 +14,6 @@ function getNowInTZ(tz: string) {
 }
 
 export async function GET(req: NextRequest) {
-  // [WHATSAPP] Disabled until WhatsApp integration is configured
-  return NextResponse.json({ disabled: true })
-
   // Verify cron secret
   const authHeader = req.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -25,17 +22,17 @@ export async function GET(req: NextRequest) {
 
   await connectDB()
 
-  // Find all users with evening reminders enabled and a WhatsApp number
+  // Find all users with evening reminders enabled and an FCM token
   const candidates = await Settings.find({
     eveningReminderEnabled: true,
-    whatsappNumber: { $ne: '' },
+    fcmToken: { $ne: '' },
   }).lean()
 
   let sent = 0
   let skipped = 0
 
   // Filter per-user by timezone: is it past their reminder time? Already reminded today?
-  const toRemind: Array<{ userId: string; name: string; whatsappNumber: string; dateKey: string }> = []
+  const toRemind: Array<{ userId: string; name: string; fcmToken: string; dateKey: string }> = []
 
   for (const user of candidates) {
     const { dateKey, time } = getNowInTZ(user.timezone || 'Asia/Kolkata')
@@ -55,7 +52,7 @@ export async function GET(req: NextRequest) {
     toRemind.push({
       userId: user.userId,
       name: user.name || 'Friend',
-      whatsappNumber: user.whatsappNumber,
+      fcmToken: user.fcmToken,
       dateKey,
     })
   }
@@ -88,7 +85,7 @@ export async function GET(req: NextRequest) {
     }
 
     const message = `Hey ${user.name}! Innu log cheythilla — Bite & Burn update cheyyaan time aayi! 💪`
-    const result = await sendWhatsAppText(user.whatsappNumber, message)
+    const result = await sendPushNotification(user.fcmToken, 'Bite & Burn', message)
 
     if (result.ok) {
       sent++

@@ -53,4 +53,14 @@ Unique constraint: `(userId, dateKey)` — one record per user per day.
 MONGODB_URI
 CLERK_SECRET_KEY
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
+# Firebase (web push notifications)
+NEXT_PUBLIC_FIREBASE_API_KEY
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+NEXT_PUBLIC_FIREBASE_PROJECT_ID
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+NEXT_PUBLIC_FIREBASE_APP_ID
+NEXT_PUBLIC_FIREBASE_VAPID_KEY
+FIREBASE_SERVICE_ACCOUNT_KEY   # full service account JSON, stringified
+CRON_SECRET                    # used by Vercel Cron to authenticate /api/cron/reminders
 ```

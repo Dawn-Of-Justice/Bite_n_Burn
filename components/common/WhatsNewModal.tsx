@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
-const WHATS_NEW_KEY = 'whats_new_seen_v1'
+const WHATS_NEW_KEY = 'whats_new_seen_v2'
 
 const UPDATES = [
-  { emoji: '💾', title: 'Save button', desc: 'Changes now buffer locally — tap Save when you\'re done. Update your water count midday, save it, come back later.' },
-  { emoji: '📅', title: 'Calendar updates instantly', desc: 'Yesterday\'s check-in now shows in the calendar the moment you save it.' },
-  { emoji: '💬', title: 'WhatsApp reminders', desc: 'Get a WhatsApp nudge if you forget to log. Set it up in Settings → Reminders.' },
+  { emoji: '⚡', title: 'Feels instant now', desc: 'Skeleton screens replace the blank loading state — the app shows a preview of the layout immediately while data loads.' },
+  { emoji: '✨', title: 'Smooth transitions', desc: 'Switching between tabs now fades and slides instead of snapping abruptly. Small thing, big difference.' },
+  { emoji: '🧭', title: 'Nav indicator', desc: 'A little green pip slides under the active tab so you always know where you are.' },
+  { emoji: '📭', title: 'Better empty states', desc: 'New users now get a friendly prompt instead of a page full of zeros.' },
 ]
 
 export function WhatsNewModal() {

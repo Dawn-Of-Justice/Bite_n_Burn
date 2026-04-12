@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useAllRecords } from '@/hooks/useAllRecords'
 import { useSettings } from '@/hooks/useSettings';
 import { useStreak } from '@/hooks/useStreak';
@@ -9,15 +10,46 @@ import { Card } from '@/components/common/Card';
 import { getMotivationalMessage } from '@/lib/utils/motivational';
 import { subDays, format } from 'date-fns';
 import type { CalendarColor, GutFeeling } from '@/lib/types/records';
+import { StatsSkeleton } from '@/components/stats/StatsSkeleton';
 
 const GUT_EMOJI: Record<GutFeeling, string> = { great: '😄', okay: '😐', rough: '😩' };
 
 export function StatsScreen() {
   const { settings } = useSettings();
-  const records = useAllRecords()
+  const { records, isLoading: recordsLoading } = useAllRecords()
   const { currentStreak, longestStreak } = useStreak(settings ?? undefined);
 
-  if (!settings) return null;
+  if (!settings) return <StatsSkeleton />;
+
+  if (!recordsLoading && records.length === 0) {
+    return (
+      <div>
+        <PageHeader title="Stats & Progress" subtitle="Ente journey kando?" />
+        <div style={{ padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, textAlign: 'center' }}>
+          <div style={{ fontSize: 56 }}>📊</div>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>No data yet!</h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 220 }}>
+            Check in today to start seeing your stats here.
+          </p>
+          <Link
+            href="/"
+            style={{
+              marginTop: 8,
+              background: 'var(--brand-leaf)',
+              color: '#fff',
+              textDecoration: 'none',
+              padding: '10px 24px',
+              borderRadius: 50,
+              fontSize: 14,
+              fontWeight: 700,
+            }}
+          >
+            Check in now →
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   const recordMap = new Map(records.map(r => [r.dateKey, r]));
 

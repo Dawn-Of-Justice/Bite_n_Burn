@@ -9,6 +9,7 @@ import { useCalendarMonth } from '@/hooks/useCalendarMonth';
 import { useSettings } from '@/hooks/useSettings';
 import { computeCalendarColor, COLOR_STYLES } from '@/lib/algorithms/calendarColor';
 import type { DailyRecord, CalendarColor } from '@/lib/types/records';
+import { CalendarSkeleton } from '@/components/calendar/CalendarSkeleton';
 
 const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
@@ -20,6 +21,9 @@ export function CalendarScreen() {
 
   const { settings } = useSettings();
   const records = useCalendarMonth(year, month);
+
+  if (!settings) return <CalendarSkeleton />;
+
   const recordMap = new Map((records ?? []).map(r => [r.dateKey, r]));
 
   const daysInMonth = getDaysInMonth(new Date(year, month - 1));
