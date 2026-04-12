@@ -21,9 +21,10 @@ export function CalendarScreen() {
 
   const { settings } = useSettings();
   const records = useCalendarMonth(year, month);
-  const recordMap = new Map((records ?? []).map(r => [r.dateKey, r]));
 
   if (!settings) return <CalendarSkeleton />;
+
+  const recordMap = new Map((records ?? []).map(r => [r.dateKey, r]));
 
   const daysInMonth = getDaysInMonth(new Date(year, month - 1));
   const startDay = getDay(startOfMonth(new Date(year, month - 1)));

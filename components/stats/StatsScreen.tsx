@@ -21,6 +21,36 @@ export function StatsScreen() {
 
   if (!settings) return <StatsSkeleton />;
 
+  if (records.length === 0) {
+    return (
+      <div>
+        <PageHeader title="Stats & Progress" subtitle="Ente journey kando?" />
+        <div style={{ padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, textAlign: 'center' }}>
+          <div style={{ fontSize: 56 }}>📊</div>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>No data yet!</h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 220 }}>
+            Check in today to start seeing your stats here.
+          </p>
+          <Link
+            href="/"
+            style={{
+              marginTop: 8,
+              background: 'var(--brand-leaf)',
+              color: '#fff',
+              textDecoration: 'none',
+              padding: '10px 24px',
+              borderRadius: 50,
+              fontSize: 14,
+              fontWeight: 700,
+            }}
+          >
+            Check in now →
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const recordMap = new Map(records.map(r => [r.dateKey, r]));
 
   // Last 7 days
@@ -62,36 +92,6 @@ export function StatsScreen() {
   const todayRecord = recordMap.get(todayKey) ?? null;
   const todayColor = todayRecord ? computeCalendarColor(todayRecord, settings) : null;
   const message = getMotivationalMessage(todayColor);
-
-  if (records.length === 0) {
-    return (
-      <div>
-        <PageHeader title="Stats & Progress" subtitle="Ente journey kando?" />
-        <div style={{ padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, textAlign: 'center' }}>
-          <div style={{ fontSize: 56 }}>📊</div>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>No data yet!</h2>
-          <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 220 }}>
-            Check in today to start seeing your stats here.
-          </p>
-          <Link
-            href="/"
-            style={{
-              marginTop: 8,
-              background: 'var(--brand-leaf)',
-              color: '#fff',
-              textDecoration: 'none',
-              padding: '10px 24px',
-              borderRadius: 50,
-              fontSize: 14,
-              fontWeight: 700,
-            }}
-          >
-            Check in now →
-          </Link>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div>
