@@ -78,7 +78,7 @@ export function BadgeShelf() {
                 width: 42,
                 height: 42,
                 borderRadius: '50%',
-                background: earned ? def.color.replace('bg-', '') : 'var(--border-color)',
+                background: earned ? def.color : 'var(--border-color)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
