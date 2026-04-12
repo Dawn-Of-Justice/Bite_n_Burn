@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { CheckSquare, CalendarDays, Sprout, BarChart3, Settings } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -50,10 +51,24 @@ export function BottomNav() {
               fontWeight: isActive ? 700 : 400,
               fontSize: 10,
               transition: 'color 0.2s',
+              position: 'relative',
             }}
           >
             <Icon size={22} strokeWidth={isActive ? 2.5 : 1.8} />
             {label}
+            {isActive && (
+              <motion.div
+                layoutId="nav-pip"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  width: 18,
+                  height: 3,
+                  background: 'var(--brand-forest)',
+                  borderRadius: '2px 2px 0 0',
+                }}
+              />
+            )}
           </Link>
         )
       })}
