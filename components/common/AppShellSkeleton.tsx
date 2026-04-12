@@ -1,9 +1,19 @@
 'use client'
 import { Skeleton } from '@/components/common/Skeleton'
 
+function getInitialTheme(): 'dark' | undefined {
+  if (typeof window === 'undefined') return undefined
+  const stored = localStorage.getItem('theme') ?? 'system'
+  if (stored === 'dark') return 'dark'
+  if (stored === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
+  return undefined
+}
+
 export function AppShellSkeleton() {
+  const darkTheme = getInitialTheme()
+
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', minHeight: '100vh', paddingBottom: 72 }}>
+    <div data-theme={darkTheme} style={{ maxWidth: 480, margin: '0 auto', minHeight: '100vh', paddingBottom: 72 }}>
       {/* Header bar */}
       <div style={{
         display: 'flex',
