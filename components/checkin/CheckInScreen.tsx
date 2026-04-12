@@ -12,6 +12,7 @@ import { useDayRecord } from '@/hooks/useDayRecord';
 import { useSettings } from '@/hooks/useSettings';
 import { defaultDailyRecord, type DailyRecord } from '@/lib/types/records';
 import { todayKey, yesterdayKey } from '@/lib/utils/date';
+import { CheckInSkeleton } from '@/components/checkin/CheckInSkeleton';
 
 const stagger = {
   animate: { transition: { staggerChildren: 0.06 } },
@@ -65,7 +66,7 @@ export function CheckInScreen() {
   const displayDate = activeDay === 'today' ? new Date() : subDays(new Date(), 1);
   const dayStr = format(displayDate, 'EEEE, MMM d');
 
-  if (!settings) return null;
+  if (!settings) return <CheckInSkeleton />;
 
   return (
     <div>
