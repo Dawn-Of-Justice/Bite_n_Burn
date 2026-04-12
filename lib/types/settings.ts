@@ -19,7 +19,7 @@ export interface UserSettings {
   morningReminderTime: string; // "08:00"
   eveningReminderEnabled: boolean;
   eveningReminderTime: string; // "21:00"
-  fcmToken: string; // Firebase Cloud Messaging token, set by browser after permission grant
+  fcmTokens: string[]; // FCM tokens — one per device/browser that has enabled notifications
   timezone: string; // IANA timezone, e.g. "Asia/Kolkata"
   lastReminderDate: string | null; // "YYYY-MM-DD" — dedup, set by cron
 
@@ -46,7 +46,7 @@ export const defaultSettings = (userId: string, name: string): UserSettings => (
   morningReminderTime: '08:00',
   eveningReminderEnabled: true,
   eveningReminderTime: '21:00',
-  fcmToken: '',
+  fcmTokens: [],
   timezone: 'Asia/Kolkata',
   lastReminderDate: null,
   theme: 'system',

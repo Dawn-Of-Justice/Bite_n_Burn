@@ -22,17 +22,17 @@ export async function GET(req: NextRequest) {
 
   await connectDB()
 
-  // Find all users with evening reminders enabled and an FCM token
+  // Find all users with evening reminders enabled and at least one FCM token
   const candidates = await Settings.find({
     eveningReminderEnabled: true,
-    fcmToken: { $ne: '' },
+    fcmTokens: { $exists: true, $not: { $size: 0 } },
   }).lean()
 
   let sent = 0
   let skipped = 0
 
   // Filter per-user by timezone: is it past their reminder time? Already reminded today?
-  const toRemind: Array<{ userId: string; name: string; fcmToken: string; dateKey: string }> = []
+  const toRemind: Array<{ userId: string; name: string; fcmTokens: string[]; dateKey: string }> = []
 
   for (const user of candidates) {
     const { dateKey, time } = getNowInTZ(user.timezone || 'Asia/Kolkata')
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
     toRemind.push({
       userId: user.userId,
       name: user.name || 'Friend',
-      fcmToken: user.fcmToken,
+      fcmTokens: user.fcmTokens ?? [],
       dateKey,
     })
   }
@@ -85,12 +85,13 @@ export async function GET(req: NextRequest) {
     }
 
     const message = `Hey ${user.name}! Innu log cheythilla — Bite & Burn update cheyyaan time aayi! 💪`
-    const result = await sendPushNotification(user.fcmToken, 'Bite & Burn', message)
-
-    if (result.ok) {
-      sent++
-    } else {
-      console.error(`Failed to send reminder to ${user.userId}: ${result.error}`)
+    for (const token of user.fcmTokens) {
+      const result = await sendPushNotification(token, 'Bite & Burn', message)
+      if (result.ok) {
+        sent++
+      } else {
+        console.error(`Failed to send reminder to ${user.userId}: ${result.error}`)
+      }
     }
 
     // Mark as reminded regardless of success to avoid spam on repeated failures

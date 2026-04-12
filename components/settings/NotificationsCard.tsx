@@ -7,6 +7,7 @@ import { requestFCMToken, setupForegroundMessages } from '@/lib/firebase-client'
 export function NotificationsCard() {
   const { settings, update } = useSettings()
   const [supported, setSupported] = useState<boolean | null>(null)
+  const [thisToken, setThisToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [testing, setTesting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -16,17 +17,23 @@ export function NotificationsCard() {
     setSupported('Notification' in window && 'serviceWorker' in navigator)
   }, [])
 
-  // Set up foreground message handler whenever notifications are enabled
+  // If permission already granted, silently retrieve this device's token
   useEffect(() => {
-    if (!settings?.fcmToken) return
+    if (!supported || Notification.permission !== 'granted') return
+    requestFCMToken().then(token => { if (token) setThisToken(token) }).catch(() => {})
+  }, [supported])
+
+  // Set up foreground message handler whenever this device is enabled
+  useEffect(() => {
+    if (!thisToken) return
     const unsub = setupForegroundMessages()
     return unsub
-  }, [settings?.fcmToken])
+  }, [thisToken])
 
-  // Don't render during SSR or if browser lacks support
   if (supported === null || !supported || !settings) return null
 
-  const enabled = !!settings.fcmToken
+  const tokens: string[] = settings.fcmTokens ?? []
+  const thisDeviceEnabled = !!thisToken && tokens.includes(thisToken)
   const denied = Notification.permission === 'denied'
 
   const handleEnable = async () => {
@@ -35,7 +42,10 @@ export function NotificationsCard() {
     try {
       const token = await requestFCMToken()
       if (token) {
-        await update({ fcmToken: token })
+        setThisToken(token)
+        if (!tokens.includes(token)) {
+          await update({ fcmTokens: [...tokens, token] })
+        }
       } else {
         setError('Permission denied or browser unsupported.')
       }
@@ -47,7 +57,10 @@ export function NotificationsCard() {
     }
   }
 
-  const handleDisable = () => update({ fcmToken: '' })
+  const handleDisable = async () => {
+    if (!thisToken) return
+    await update({ fcmTokens: tokens.filter(t => t !== thisToken) })
+  }
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     update({ eveningReminderTime: e.target.value })
@@ -101,7 +114,13 @@ export function NotificationsCard() {
             />
           </div>
 
-          {enabled ? (
+          {tokens.length > 0 && (
+            <p style={{ margin: '0 0 10px', fontSize: 12, color: 'var(--text-secondary)' }}>
+              {tokens.length} {tokens.length === 1 ? 'device' : 'devices'} enabled
+            </p>
+          )}
+
+          {thisDeviceEnabled ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <button
                 onClick={handleTestPush}
@@ -119,7 +138,7 @@ export function NotificationsCard() {
                 onClick={handleDisable}
                 style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-secondary)', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
               >
-                Disable Notifications
+                Disable on This Device
               </button>
             </div>
           ) : (
@@ -129,7 +148,7 @@ export function NotificationsCard() {
                 disabled={loading}
                 style={{ width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: 'var(--brand-forest)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.7 : 1 }}
               >
-                {loading ? 'Enabling…' : 'Enable Notifications'}
+                {loading ? 'Enabling…' : 'Enable on This Device'}
               </button>
               {error && (
                 <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-error, #e53e3e)', textAlign: 'center' }}>

@@ -12,19 +12,19 @@ export async function POST() {
   await connectDB()
   const settings = await Settings.findOne({ userId }).lean()
 
-  if (!settings?.fcmToken) {
-    return NextResponse.json({ error: 'No FCM token — enable notifications first' }, { status: 400 })
+  if (!settings?.fcmTokens?.length) {
+    return NextResponse.json({ error: 'No FCM tokens — enable notifications on at least one device first' }, { status: 400 })
   }
 
-  const result = await sendPushNotification(
-    settings.fcmToken,
-    'Bite & Burn',
-    `Hey ${settings.name || 'Friend'}! Innu log cheythilla — Bite & Burn update cheyyaan time aayi! 💪`,
+  const message = `Hey ${settings.name || 'Friend'}! Innu log cheythilla — Bite & Burn update cheyyaan time aayi! 💪`
+  const results = await Promise.all(
+    settings.fcmTokens.map(token => sendPushNotification(token, 'Bite & Burn', message))
   )
 
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 500 })
+  const failed = results.filter(r => !r.ok)
+  if (failed.length === results.length) {
+    return NextResponse.json({ error: failed[0].error }, { status: 500 })
   }
 
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({ ok: true, sent: results.length - failed.length })
 }

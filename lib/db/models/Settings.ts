@@ -11,7 +11,7 @@ const SettingsSchema = new Schema({
   morningReminderTime:     { type: String, default: '08:00' },
   eveningReminderEnabled:  { type: Boolean, default: true },
   eveningReminderTime:     { type: String, default: '21:00' },
-  fcmToken:                { type: String, default: '' },
+  fcmTokens:               { type: [String], default: [] },
   timezone:                { type: String, default: 'Asia/Kolkata' },
   lastReminderDate:        { type: String, default: null },
   theme:                   { type: String, enum: ['light', 'dark', 'system'], default: 'system' },
