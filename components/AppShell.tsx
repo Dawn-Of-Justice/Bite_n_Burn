@@ -1,5 +1,4 @@
 'use client'
-// [WHATSAPP] import { useState, useEffect } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { SignIn } from '@clerk/nextjs'
 import { usePathname } from 'next/navigation'
@@ -10,23 +9,12 @@ import { OnboardingScreen } from '@/components/settings/OnboardingScreen'
 import { ThemeProvider } from '@/components/common/ThemeProvider'
 import { WhatsNewModal } from '@/components/common/WhatsNewModal'
 import { AppShellSkeleton } from '@/components/common/AppShellSkeleton'
-// [WHATSAPP] import { ReminderPromptModal } from '@/components/common/ReminderPromptModal'
 import type { ReactNode } from 'react'
-
-// [WHATSAPP] const REMINDER_DISMISSED_KEY = 'reminder_prompt_dismissed'
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { isSignedIn, isLoaded } = useAuth()
   const { settings, isLoading } = useSettings()
   const pathname = usePathname()
-  // [WHATSAPP] const [showReminderPrompt, setShowReminderPrompt] = useState(false)
-
-  // [WHATSAPP] useEffect(() => {
-  //   if (settings && !settings.whatsappNumber && !localStorage.getItem(REMINDER_DISMISSED_KEY)) {
-  //     const t = setTimeout(() => setShowReminderPrompt(true), 800)
-  //     return () => clearTimeout(t)
-  //   }
-  // }, [settings])
 
   if (!isLoaded || (isSignedIn && isLoading)) {
     return <AppShellSkeleton />
@@ -65,7 +53,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         </AnimatePresence>
         <BottomNav />
         <WhatsNewModal />
-        {/* [WHATSAPP] {showReminderPrompt && <ReminderPromptModal onDone={() => setShowReminderPrompt(false)} />} */}
       </div>
     </ThemeProvider>
   )
