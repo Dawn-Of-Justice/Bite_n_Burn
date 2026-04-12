@@ -7,18 +7,13 @@ import { useSettings } from '@/hooks/useSettings';
 import { STAGE_COMPONENTS } from '@/components/plant/PlantStages';
 import { BadgeShelf } from '@/components/plant/BadgeShelf';
 import { STAGE_THRESHOLDS } from '@/lib/types/plant';
+import { PlantSkeleton } from '@/components/plant/PlantSkeleton';
 
 export function PlantScreen() {
   const { settings } = useSettings();
   const plantInfo = usePlantStage(settings ?? undefined);
 
-  if (!settings || !plantInfo) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
-        <span style={{ fontSize: 48 }}>🌱</span>
-      </div>
-    );
-  }
+  if (!settings || !plantInfo) return <PlantSkeleton />;
 
   const PlantComponent = STAGE_COMPONENTS[plantInfo.stage];
   const nextThreshold = plantInfo.nextThreshold;
