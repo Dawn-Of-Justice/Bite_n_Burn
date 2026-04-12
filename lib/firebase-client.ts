@@ -46,8 +46,11 @@ export function setupForegroundMessages(): () => void {
   return onMessage(messaging, (payload) => {
     const title = payload.notification?.title ?? 'Bite & Burn'
     const body = payload.notification?.body ?? ''
-    if (Notification.permission === 'granted') {
-      new Notification(title, { body, icon: '/favicon.ico' })
-    }
+    if (Notification.permission !== 'granted') return
+    // new Notification() is not supported in PWA/Android contexts —
+    // always go through the service worker registration instead
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, { body, icon: '/favicon.ico' })
+    })
   })
 }
