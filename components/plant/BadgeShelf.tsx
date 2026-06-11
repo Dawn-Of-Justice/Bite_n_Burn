@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useBadges } from '@/hooks/useBadges'
 
 import { BADGE_DEFINITIONS } from '@/lib/types/badges';
@@ -7,22 +8,6 @@ import * as Icons from 'lucide-react';
 import { Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
-
-// BADGE_DEFINITIONS store Tailwind bg classes — map them to real colors for inline styles.
-const BADGE_HEX: Record<string, string> = {
-  'bg-emerald-500': '#10B981',
-  'bg-sky-500': '#0EA5E9',
-  'bg-green-600': '#16A34A',
-  'bg-orange-400': '#FB923C',
-  'bg-orange-500': '#F97316',
-  'bg-yellow-500': '#EAB308',
-  'bg-blue-500': '#3B82F6',
-  'bg-lime-500': '#84CC16',
-  'bg-green-500': '#22C55E',
-  'bg-green-700': '#15803D',
-  'bg-cyan-500': '#06B6D4',
-  'bg-indigo-400': '#818CF8',
-};
 
 export function BadgeShelf() {
   const { badges, markSeen } = useBadges()
@@ -48,16 +33,35 @@ export function BadgeShelf() {
         Achievements 🏆
       </h4>
       {badges.length === 0 && (
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
-          Start checking in to earn badges! Kollam aavum! 🌱
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '12px 0 4px', textAlign: 'center' }}>
+          <div style={{ fontSize: 40 }}>🏆</div>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: 'var(--text-primary)' }}>No badges yet</p>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            Start checking in to earn achievements. Kollam aavum!
+          </p>
+          <Link
+            href="/"
+            style={{
+              marginTop: 4,
+              background: 'var(--brand-amber)',
+              color: '#fff',
+              textDecoration: 'none',
+              padding: '8px 20px',
+              borderRadius: 50,
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            Start →
+          </Link>
+        </div>
       )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
         {BADGE_DEFINITIONS.map((def, idx) => {
           const earned = earnedMap.has(def.badgeId);
           const isNew = earned && !earnedMap.get(def.badgeId)?.seenByUser;
           const IconComp = (Icons as unknown as Record<string, React.FC<{ size?: number; color?: string }>>)[def.icon];
-          const hex = BADGE_HEX[def.color] ?? '#52B788';
+          const hex = def.color;
 
           return (
             <motion.div

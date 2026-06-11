@@ -4,6 +4,7 @@ import { useClerk } from '@clerk/nextjs'
 import { PageHeader } from '@/components/common/PageHeader';
 import { Card } from '@/components/common/Card';
 import { useSettings } from '@/hooks/useSettings';
+import { NotificationsCard } from '@/components/settings/NotificationsCard'
 import { X, Plus, LogOut } from 'lucide-react';
 
 export function SettingsScreen() {
@@ -132,7 +133,7 @@ export function SettingsScreen() {
           ))}
         </Card>
 
-        {/* [WHATSAPP] Reminders card — re-enable when WhatsApp integration is ready */}
+        <NotificationsCard />
 
         {/* Streak freeze info */}
         <Card>

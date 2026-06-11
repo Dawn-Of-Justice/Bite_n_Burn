@@ -8,6 +8,7 @@ const WHATS_NEW_KEY = 'whats_new_seen_v3'
 const UPDATES = [
   { emoji: '🌿', title: 'A whole new look', desc: 'Fresh fonts, a warm garden glow behind every screen, glassier cards, and a polished dark mode. Same app, adipoli new vibe.' },
   { emoji: '🎉', title: 'Perfect check-in celebrations', desc: 'A new progress meter tracks your 4 daily check-ins — finish all of them and get a confetti party. Nale kaanam!' },
+  { emoji: '⚡', title: 'Feels instant now', desc: 'Skeleton screens replace the blank loading state — the app shows a preview of the layout immediately while data loads.' },
   { emoji: '🧭', title: 'Floating navigation', desc: 'The nav is now a floating glass pill with a smooth indicator that glides between tabs.' },
   { emoji: '📊', title: 'Stats that move', desc: 'Numbers count up, charts grow in, badges glow when earned, and your plant now floats on a glowing mound.' },
   { emoji: '📆', title: 'Smoother calendar', desc: 'Slick month transitions, a pulsing ring on today, and day details in a proper bottom sheet.' },

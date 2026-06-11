@@ -67,17 +67,15 @@ function checkCondition(badgeId: string, stats: Stats): boolean {
   }
 }
 
-export async function checkAndAwardBadges(
+/** Returns the badgeIds that are newly eligible (not yet earned). */
+export function computeNewBadges(
   records: DailyRecord[],
   settings: UserSettings,
   earnedBadges: EarnedBadge[],
-) {
+): string[] {
   const stats = buildStats(records, settings);
   const earnedIds = new Set(earnedBadges.map(b => b.badgeId));
-
-  for (const def of BADGE_DEFINITIONS) {
-    if (!earnedIds.has(def.badgeId) && checkCondition(def.badgeId, stats)) {
-      // Badge awarding handled via API route
-    }
-  }
+  return BADGE_DEFINITIONS
+    .filter(def => !earnedIds.has(def.badgeId) && checkCondition(def.badgeId, stats))
+    .map(def => def.badgeId);
 }

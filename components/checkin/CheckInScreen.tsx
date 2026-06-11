@@ -12,6 +12,7 @@ import { useDayRecord } from '@/hooks/useDayRecord';
 import { useSettings } from '@/hooks/useSettings';
 import { defaultDailyRecord, type DailyRecord } from '@/lib/types/records';
 import { todayKey, yesterdayKey } from '@/lib/utils/date';
+import { CheckInSkeleton } from '@/components/checkin/CheckInSkeleton';
 
 const stagger = {
   animate: { transition: { staggerChildren: 0.06 } },
@@ -140,7 +141,7 @@ export function CheckInScreen() {
   const displayDate = activeDay === 'today' ? new Date() : subDays(new Date(), 1);
   const dayStr = format(displayDate, 'EEEE, MMM d');
 
-  if (!settings) return null;
+  if (!settings) return <CheckInSkeleton />;
 
   return (
     <div>
@@ -362,35 +363,31 @@ export function CheckInScreen() {
         </AnimatePresence>
 
         {/* Saved toast */}
-        <AnimatePresence>
-          {showSaved && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              style={{
-                position: 'fixed',
-                bottom: 'calc(96px + env(safe-area-inset-bottom))',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 50,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'var(--brand-forest)',
-                color: '#fff',
-                padding: '8px 18px',
-                borderRadius: 50,
-                fontSize: 13,
-                fontWeight: 700,
-                boxShadow: '0 4px 16px rgba(45,106,79,0.25)',
-                pointerEvents: 'none',
-              }}
-            >
-              <Check size={14} /> Saved
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div style={{ position: 'fixed', bottom: 'calc(96px + env(safe-area-inset-bottom))', left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 50, pointerEvents: 'none' }}>
+          <AnimatePresence>
+            {showSaved && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: 'var(--brand-forest)',
+                  color: '#fff',
+                  padding: '8px 18px',
+                  borderRadius: 50,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  boxShadow: '0 4px 16px rgba(45,106,79,0.25)',
+                }}
+              >
+                <Check size={14} /> Saved
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
