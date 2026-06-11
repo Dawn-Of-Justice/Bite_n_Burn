@@ -15,12 +15,16 @@ export function PoyoCard({ record, onUpdate }: Props) {
   const [showRestConfirm, setShowRestConfirm] = useState(false);
 
   return (
-    <Card>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-        <Dumbbell size={20} color="var(--brand-forest)" />
-        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>Poyo? 🏋️</h2>
+    <Card accent="#2D6A4F">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+        <div style={{ width: 38, height: 38, borderRadius: 12, background: 'var(--tint-leaf)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Dumbbell size={19} color="#2D6A4F" />
+        </div>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>Poyo? 🏋️</h2>
+          <p style={{ margin: '1px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>Did you hit the gym / exercise today?</p>
+        </div>
       </div>
-      <p style={{ margin: '2px 0 10px', fontSize: 12, color: 'var(--text-secondary)' }}>Did you hit the gym / exercise today?</p>
 
       {record.isRestDay ? (
         <motion.div

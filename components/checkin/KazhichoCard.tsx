@@ -23,12 +23,16 @@ export function KazhichoCard({ record, settings, onUpdate }: Props) {
   };
 
   return (
-    <Card>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-        <UtensilsCrossed size={20} color="var(--brand-amber)" />
-        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>Kazhicho? 🍟</h2>
+    <Card accent="#E09F3E">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+        <div style={{ width: 38, height: 38, borderRadius: 12, background: 'var(--tint-amber)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <UtensilsCrossed size={19} color="#E09F3E" />
+        </div>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>Kazhicho? 🍟</h2>
+          <p style={{ margin: '1px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>Did you eat junk food today?</p>
+        </div>
       </div>
-      <p style={{ margin: '2px 0 10px', fontSize: 12, color: 'var(--text-secondary)' }}>Did you eat junk food today?</p>
 
       <ToggleButton
         value={record.ateJunk ?? null}

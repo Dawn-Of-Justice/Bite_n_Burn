@@ -4,8 +4,25 @@ import { useBadges } from '@/hooks/useBadges'
 import { BADGE_DEFINITIONS } from '@/lib/types/badges';
 import { Card } from '@/components/common/Card';
 import * as Icons from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
+
+// BADGE_DEFINITIONS store Tailwind bg classes — map them to real colors for inline styles.
+const BADGE_HEX: Record<string, string> = {
+  'bg-emerald-500': '#10B981',
+  'bg-sky-500': '#0EA5E9',
+  'bg-green-600': '#16A34A',
+  'bg-orange-400': '#FB923C',
+  'bg-orange-500': '#F97316',
+  'bg-yellow-500': '#EAB308',
+  'bg-blue-500': '#3B82F6',
+  'bg-lime-500': '#84CC16',
+  'bg-green-500': '#22C55E',
+  'bg-green-700': '#15803D',
+  'bg-cyan-500': '#06B6D4',
+  'bg-indigo-400': '#818CF8',
+};
 
 export function BadgeShelf() {
   const { badges, markSeen } = useBadges()
@@ -18,30 +35,37 @@ export function BadgeShelf() {
     }
   }, [badges]);
 
-  
-
   return (
-    <Card>
-      <h4 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
+    <Card accent="var(--brand-amber)">
+      <h4 style={{
+        margin: '0 0 12px',
+        fontSize: 11,
+        fontWeight: 800,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        color: 'var(--text-secondary)',
+      }}>
         Achievements 🏆
       </h4>
       {badges.length === 0 && (
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>
+        <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
           Start checking in to earn badges! Kollam aavum! 🌱
         </p>
       )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-        {BADGE_DEFINITIONS.map(def => {
+        {BADGE_DEFINITIONS.map((def, idx) => {
           const earned = earnedMap.has(def.badgeId);
           const isNew = earned && !earnedMap.get(def.badgeId)?.seenByUser;
           const IconComp = (Icons as unknown as Record<string, React.FC<{ size?: number; color?: string }>>)[def.icon];
+          const hex = BADGE_HEX[def.color] ?? '#52B788';
 
           return (
             <motion.div
               key={def.badgeId}
-              initial={isNew ? { scale: 0.5 } : false}
-              animate={isNew ? { scale: 1 } : {}}
-              transition={{ type: 'spring', stiffness: 300 }}
+              initial={earned ? { scale: 0.5, opacity: 0 } : false}
+              animate={earned ? { scale: 1, opacity: 1 } : {}}
+              transition={{ type: 'spring' as const, stiffness: 300, damping: 18, delay: idx * 0.05 }}
+              whileTap={{ scale: 0.88 }}
               title={`${def.name}: ${def.description}`}
               style={{
                 display: 'flex',
@@ -50,22 +74,42 @@ export function BadgeShelf() {
                 gap: 4,
                 padding: '10px 4px',
                 borderRadius: 12,
-                background: earned ? 'transparent' : 'var(--border-color)',
-                opacity: earned ? 1 : 0.35,
+                background: earned ? `color-mix(in srgb, ${hex} 8%, transparent)` : 'var(--bg-inset)',
+                opacity: earned ? 1 : 0.45,
+                filter: earned ? 'none' : 'grayscale(1)',
+                cursor: 'default',
               }}
             >
               <div style={{
+                position: 'relative',
                 width: 42,
                 height: 42,
                 borderRadius: '50%',
-                background: earned ? def.color.replace('bg-', '') : 'var(--border-color)',
+                background: earned ? hex : 'var(--border-color)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                // Use inline color via CSS filter trick — Tailwind classes won't work in inline CSS
-                filter: earned ? 'none' : 'grayscale(1)',
+                boxShadow: earned ? `0 0 0 3px ${hex}33, 0 4px 12px ${hex}55` : 'none',
+                ...(isNew ? { animation: 'bnb-pulse-ring 1.6s ease-out 2' } : {}),
               }}>
                 {IconComp ? <IconComp size={20} color="#fff" /> : <span>🏅</span>}
+                {!earned && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: -2,
+                    right: -2,
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-color)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <Lock size={9} color="var(--text-secondary)" />
+                  </div>
+                )}
               </div>
               <span style={{ fontSize: 9, fontWeight: 700, color: earned ? 'var(--text-primary)' : 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2 }}>
                 {def.name}

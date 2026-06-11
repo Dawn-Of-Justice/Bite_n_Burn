@@ -1,4 +1,5 @@
 'use client'
+import { motion } from 'framer-motion';
 import { useAllRecords } from '@/hooks/useAllRecords'
 import { useSettings } from '@/hooks/useSettings';
 import { useStreak } from '@/hooks/useStreak';
@@ -6,11 +7,24 @@ import { computeCalendarColor, COLOR_STYLES } from '@/lib/algorithms/calendarCol
 import { hasMetWaterGoal } from '@/lib/utils/water';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Card } from '@/components/common/Card';
+import { CountUp } from '@/components/common/CountUp';
 import { getMotivationalMessage } from '@/lib/utils/motivational';
 import { subDays, format } from 'date-fns';
+import type { CSSProperties } from 'react';
 import type { CalendarColor, GutFeeling } from '@/lib/types/records';
 
 const GUT_EMOJI: Record<GutFeeling, string> = { great: '😄', okay: '😐', rough: '😩' };
+
+const SECTION_HEADING: CSSProperties = {
+  margin: '0 0 12px',
+  fontSize: 11,
+  fontWeight: 800,
+  textTransform: 'uppercase',
+  letterSpacing: 1,
+  color: 'var(--text-secondary)',
+};
+
+const BAR_HEIGHTS: Record<CalendarColor, number> = { gray: 12, red: 28, amber: 36, blue: 44, green: 56 };
 
 export function StatsScreen() {
   const { settings } = useSettings();
@@ -67,24 +81,53 @@ export function StatsScreen() {
 
       <div style={{ padding: '16px 16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
         {/* Motivational message */}
-        <Card style={{ background: 'linear-gradient(135deg, var(--brand-forest), var(--brand-leaf))', border: 'none' }}>
-          <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#fff', textAlign: 'center', lineHeight: 1.5 }}>
+        <Card style={{
+          background: 'linear-gradient(135deg, var(--brand-forest), var(--brand-leaf))',
+          border: 'none',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* slow shimmer sweep */}
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.22) 50%, transparent 65%)',
+              backgroundSize: '200% 100%',
+              animation: 'bnb-shimmer 4.5s linear infinite',
+            }}
+          />
+          <p style={{
+            margin: 0,
+            fontSize: 17,
+            fontWeight: 700,
+            color: '#fff',
+            textAlign: 'center',
+            lineHeight: 1.5,
+            fontFamily: 'var(--font-display-stack)',
+            position: 'relative',
+          }}>
             {message}
           </p>
         </Card>
 
         {/* Weekly insight */}
         <Card>
-          <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 800 }}>This Week</h4>
+          <h4 style={SECTION_HEADING}>This Week</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
             {[
               { label: 'Gym', value: weekGym, color: 'var(--brand-leaf)', emoji: '💪' },
               { label: 'Water Goal', value: weekWater, color: 'var(--brand-sky)', emoji: '💧' },
               { label: 'Junk-Free', value: weekJunkFree, color: 'var(--brand-amber)', emoji: '🥗' },
             ].map(({ label, value, color, emoji }) => (
-              <div key={label} style={{ textAlign: 'center', padding: '10px 0', background: 'var(--bg-primary)', borderRadius: 12 }}>
+              <div key={label} style={{ textAlign: 'center', padding: '10px 0', background: 'var(--bg-inset)', borderRadius: 12 }}>
                 <div style={{ fontSize: 20 }}>{emoji}</div>
-                <div style={{ fontSize: 22, fontWeight: 900, color }}>{value}<span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>/7</span></div>
+                <div style={{ fontSize: 22, fontWeight: 900, color }}>
+                  <CountUp value={value} />
+                  <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>/7</span>
+                </div>
                 <div style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600 }}>{label}</div>
               </div>
             ))}
@@ -101,8 +144,8 @@ export function StatsScreen() {
             { label: 'Junk-Free Days', value: junkFreeDays, suffix: 'total', color: '#52B788' },
             { label: 'Total Check-ins', value: records.length, suffix: 'days', color: 'var(--brand-amber)' },
           ].map(({ label, value, suffix, color }) => (
-            <Card key={label} style={{ padding: '14px 16px', textAlign: 'center' }}>
-              <div style={{ fontSize: 28, fontWeight: 900, color }}>{value}</div>
+            <Card key={label} accent={color} style={{ padding: '14px 16px', textAlign: 'center' }}>
+              <CountUp value={value} style={{ fontSize: 28, fontWeight: 900, color, display: 'block', lineHeight: 1.2 }} />
               <div style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600 }}>{suffix}</div>
               <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>{label}</div>
             </Card>
@@ -111,14 +154,39 @@ export function StatsScreen() {
 
         {/* Last 7 days bar chart */}
         <Card>
-          <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 800 }}>Last 7 Days</h4>
+          <h4 style={SECTION_HEADING}>Last 7 Days</h4>
           <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end', height: 64 }}>
-            {last7.map(({ key, label, color }) => {
+            {last7.map(({ key, label, color }, i) => {
               const style = COLOR_STYLES[color];
+              const isToday = i === 6;
               return (
                 <div key={key} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                  <div style={{ width: '100%', height: color === 'gray' ? 12 : color === 'red' ? 28 : color === 'amber' ? 36 : color === 'blue' ? 44 : 56, background: style.bg, borderRadius: '4px 4px 0 0', transition: 'height 0.4s ease' }} />
-                  <span style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600 }}>{label}</span>
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: BAR_HEIGHTS[color] }}
+                    transition={{ duration: 0.5, delay: i * 0.07, ease: 'easeOut' }}
+                    style={{
+                      width: '100%',
+                      background: style.bg,
+                      borderRadius: '7px 7px 3px 3px',
+                      opacity: isToday ? 1 : 0.8,
+                      boxShadow: isToday ? `0 0 12px ${style.bg}` : 'none',
+                    }}
+                  />
+                  <span style={{
+                    fontSize: 10,
+                    color: isToday ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    fontWeight: isToday ? 800 : 600,
+                  }}>
+                    {label}
+                  </span>
+                  <span aria-hidden style={{
+                    width: 5,
+                    height: 5,
+                    borderRadius: '50%',
+                    background: style.bg,
+                    opacity: isToday ? 1 : 0.55,
+                  }} />
                 </div>
               );
             })}
@@ -127,7 +195,7 @@ export function StatsScreen() {
 
         {/* Gut feeling */}
         <Card>
-          <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 800 }}>How You've Been Feeling</h4>
+          <h4 style={SECTION_HEADING}>How You've Been Feeling</h4>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 14 }}>
             {last7.map(({ key, label, gutFeeling }) => (
               <div key={key} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
@@ -138,9 +206,9 @@ export function StatsScreen() {
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {(['great', 'okay', 'rough'] as GutFeeling[]).map(g => (
-              <div key={g} style={{ flex: 1, textAlign: 'center', padding: '8px 0', background: 'var(--bg-primary)', borderRadius: 10 }}>
+              <div key={g} style={{ flex: 1, textAlign: 'center', padding: '8px 0', background: 'var(--bg-inset)', borderRadius: 10 }}>
                 <div style={{ fontSize: 20 }}>{GUT_EMOJI[g]}</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>{gutCounts[g]}</div>
+                <CountUp value={gutCounts[g]} style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', display: 'block' }} />
                 <div style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'capitalize' }}>{g}</div>
               </div>
             ))}
@@ -149,17 +217,31 @@ export function StatsScreen() {
 
         {/* All-time breakdown */}
         <Card>
-          <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 800 }}>All-Time Breakdown</h4>
-          {(Object.entries(colorCounts) as [CalendarColor, number][]).map(([color, count]) => {
+          <h4 style={SECTION_HEADING}>All-Time Breakdown</h4>
+          {(Object.entries(colorCounts) as [CalendarColor, number][]).map(([color, count], i) => {
             const total = records.length || 1;
             return (
-              <div key={color} style={{ marginBottom: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>
+              <div key={color} style={{ marginBottom: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
                   <span>{COLOR_STYLES[color].label}</span>
-                  <span style={{ fontWeight: 700 }}>{count}</span>
+                  <span style={{
+                    fontWeight: 800,
+                    fontSize: 11,
+                    color: 'var(--text-primary)',
+                    background: 'var(--bg-inset)',
+                    padding: '1px 9px',
+                    borderRadius: 999,
+                  }}>
+                    {count}
+                  </span>
                 </div>
-                <div style={{ height: 6, background: 'var(--border-color)', borderRadius: 4 }}>
-                  <div style={{ height: '100%', width: `${(count / total) * 100}%`, background: COLOR_STYLES[color].bg, borderRadius: 4, transition: 'width 0.5s ease' }} />
+                <div style={{ height: 8, background: 'var(--border-color)', borderRadius: 999, overflow: 'hidden' }}>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(count / total) * 100}%` }}
+                    transition={{ duration: 0.7, delay: 0.15 + i * 0.08, ease: 'easeOut' }}
+                    style={{ height: '100%', background: COLOR_STYLES[color].bg, borderRadius: 999 }}
+                  />
                 </div>
               </div>
             );

@@ -21,6 +21,45 @@ const cardAnim = {
   animate: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 280, damping: 24 } },
 };
 
+// One segment per check-in card, in card order: Poyo, Kazhicho, Vellam, Gut
+const SEGMENT_COLORS = ['#2D6A4F', '#E09F3E', '#48CAE4', '#52B788'];
+
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Suprabhatham! ☀️';
+  if (hour < 17) return 'Good afternoon, alle! 🌤️';
+  return 'Sandhya aayi! 🌙';
+}
+
+// Confetti burst — pure framer-motion, brand colors
+interface ConfettiPiece {
+  id: number;
+  x: number;
+  y: number;
+  rot: number;
+  size: number;
+  color: string;
+  round: boolean;
+  delay: number;
+}
+const CONFETTI_COLORS = ['#2D6A4F', '#52B788', '#E09F3E', '#48CAE4', '#B7E4C7', '#C1121F'];
+function makeBurst(): ConfettiPiece[] {
+  return Array.from({ length: 22 }, (_, i) => {
+    const angle = (i / 22) * Math.PI * 2 + Math.random() * 0.35;
+    const dist = 90 + Math.random() * 110;
+    return {
+      id: i,
+      x: Math.cos(angle) * dist,
+      y: Math.sin(angle) * dist - 40,
+      rot: Math.random() * 360 - 180,
+      size: 6 + Math.random() * 7,
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      round: i % 2 === 0,
+      delay: Math.random() * 0.12,
+    };
+  });
+}
+
 export function CheckInScreen() {
   const [activeDay, setActiveDay] = useState<'today' | 'yesterday'>('today');
   const { settings, update: updateSettings } = useSettings();
@@ -28,7 +67,7 @@ export function CheckInScreen() {
   const tKey = todayKey();
   const yKey = yesterdayKey();
 
-  const { record: todayRecord, update: todayUpdate } = useDayRecord(tKey);
+  const { record: todayRecord, update: todayUpdate, isLoading: isTodayLoading } = useDayRecord(tKey);
   const { record: yesterdayRecord, update: yesterdayUpdate, isLoading: isYesterdayLoading } = useDayRecord(yKey);
 
   const isYesterdayMissed = !isYesterdayLoading && !yesterdayRecord?.completedAt;
@@ -49,6 +88,7 @@ export function CheckInScreen() {
   const activeKey = activeDay === 'today' ? tKey : yKey;
   const record = activeDay === 'today' ? todayRecord : yesterdayRecord;
   const update = activeDay === 'today' ? todayUpdate : yesterdayUpdate;
+  const isActiveLoading = activeDay === 'today' ? isTodayLoading : isYesterdayLoading;
   const r = record ?? defaultDailyRecord(activeKey);
 
   // Saved toast
@@ -62,6 +102,41 @@ export function CheckInScreen() {
     savedTimer.current = setTimeout(() => setShowSaved(false), 1500);
   };
 
+  // ---- Daily completion meter (derived locally, view-only) ----
+  const doneFlags = [
+    r.didGym != null || r.isRestDay === true, // Poyo
+    r.ateJunk != null,                        // Kazhicho
+    (r.waterCount ?? 0) > 0,                  // Vellam
+    r.gutFeeling != null,                     // Gut
+  ];
+  const doneCount = doneFlags.filter(Boolean).length;
+
+  // ---- One-time celebration when completion hits 4/4 this session ----
+  const [confetti, setConfetti] = useState<ConfettiPiece[] | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const prevDoneRef = useRef<{ day: string; count: number } | null>(null);
+  const celebrationTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    if (isActiveLoading) {
+      prevDoneRef.current = null; // don't compare across loading boundaries
+      return;
+    }
+    const prev = prevDoneRef.current;
+    if (prev && prev.day === activeDay && prev.count < 4 && doneCount === 4) {
+      setConfetti(makeBurst());
+      setShowCelebration(true);
+      celebrationTimers.current.forEach(clearTimeout);
+      celebrationTimers.current = [
+        setTimeout(() => setConfetti(null), 1400),
+        setTimeout(() => setShowCelebration(false), 4200),
+      ];
+    }
+    prevDoneRef.current = { day: activeDay, count: doneCount };
+  }, [doneCount, activeDay, isActiveLoading]);
+
+  useEffect(() => () => celebrationTimers.current.forEach(clearTimeout), []);
+
   const displayDate = activeDay === 'today' ? new Date() : subDays(new Date(), 1);
   const dayStr = format(displayDate, 'EEEE, MMM d');
 
@@ -72,41 +147,57 @@ export function CheckInScreen() {
       <DailySummaryBar viewingYesterday={activeDay === 'yesterday'} />
       <div style={{ padding: '16px 16px 24px' }}>
 
-        {/* Yesterday tab toggle */}
+        {/* Today / Yesterday segmented control */}
         {isYesterdayMissed && (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-            <button
-              onClick={() => setActiveDay('today')}
-              style={{
-                flex: 1,
-                padding: '8px 0',
-                borderRadius: 20,
-                border: 'none',
-                fontWeight: 700,
-                fontSize: 13,
-                cursor: 'pointer',
-                background: activeDay === 'today' ? 'var(--brand-leaf)' : 'var(--border-color)',
-                color: activeDay === 'today' ? '#fff' : 'var(--text-secondary)',
-              }}
-            >
-              Today
-            </button>
-            <button
-              onClick={() => setActiveDay('yesterday')}
-              style={{
-                flex: 1,
-                padding: '8px 0',
-                borderRadius: 20,
-                border: 'none',
-                fontWeight: 700,
-                fontSize: 13,
-                cursor: 'pointer',
-                background: activeDay === 'yesterday' ? 'var(--brand-sky)' : 'var(--border-color)',
-                color: activeDay === 'yesterday' ? '#fff' : 'var(--text-secondary)',
-              }}
-            >
-              Yesterday
-            </button>
+          <div style={{
+            display: 'flex',
+            marginBottom: 16,
+            padding: 4,
+            borderRadius: 26,
+            background: 'var(--bg-inset)',
+            border: '1px solid var(--border-color)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+          }}>
+            {(['today', 'yesterday'] as const).map(day => {
+              const active = activeDay === day;
+              return (
+                <button
+                  key={day}
+                  onClick={() => setActiveDay(day)}
+                  style={{
+                    position: 'relative',
+                    flex: 1,
+                    minHeight: 40,
+                    border: 'none',
+                    background: 'transparent',
+                    borderRadius: 22,
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: active ? '#fff' : 'var(--text-secondary)',
+                    transition: 'color 0.2s',
+                    zIndex: 0,
+                  }}
+                >
+                  {active && (
+                    <motion.div
+                      layoutId="bnb-day-pill"
+                      transition={{ type: 'spring' as const, stiffness: 420, damping: 32 }}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: 22,
+                        background: day === 'today' ? 'var(--brand-leaf)' : 'var(--brand-sky)',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.14)',
+                        zIndex: -1,
+                      }}
+                    />
+                  )}
+                  <span style={{ position: 'relative' }}>{day === 'today' ? 'Today' : 'Yesterday'}</span>
+                </button>
+              );
+            })}
           </div>
         )}
 
@@ -153,12 +244,82 @@ export function CheckInScreen() {
           </motion.div>
         )}
 
+        {/* Greeting header + completion meter */}
         <div style={{ marginBottom: 16 }}>
-          <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>{dayStr}</p>
-          <h2 style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--brand-forest)', fontWeight: 800, letterSpacing: '0.01em' }}>
+            {getGreeting()}
+          </p>
+          <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>{dayStr}</p>
+          <h2 style={{ margin: '4px 0 0', fontSize: 26, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.15 }}>
             {record?.completedAt ? 'Check-in done! 🎉' : 'Enthayee innu? ✏️'}
           </h2>
+
+          {/* 4-segment daily completion meter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12 }}>
+            <div style={{ display: 'flex', gap: 5, flex: 1 }}>
+              {doneFlags.map((done, i) => (
+                <div
+                  key={i}
+                  style={{
+                    flex: 1,
+                    height: 7,
+                    borderRadius: 4,
+                    background: 'var(--bg-inset)',
+                    border: '1px solid var(--border-color)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <motion.div
+                    initial={false}
+                    animate={{ scaleX: done ? 1 : 0 }}
+                    transition={{ type: 'spring' as const, stiffness: 260, damping: 26 }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 4,
+                      background: SEGMENT_COLORS[i],
+                      transformOrigin: 'left',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <span style={{
+              fontSize: 12,
+              fontWeight: 800,
+              whiteSpace: 'nowrap',
+              color: doneCount === 4 ? 'var(--brand-leaf)' : 'var(--text-secondary)',
+            }}>
+              {doneCount}/4{doneCount === 4 ? ' ✓' : ''}
+            </span>
+          </div>
         </div>
+
+        {/* Perfect check-in banner */}
+        <AnimatePresence>
+          {showCelebration && (
+            <motion.div
+              initial={{ opacity: 0, y: -12, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring' as const, stiffness: 340, damping: 22 } }}
+              exit={{ opacity: 0, y: -8, transition: { duration: 0.25 } }}
+              style={{
+                marginBottom: 14,
+                padding: '13px 16px',
+                borderRadius: 16,
+                textAlign: 'center',
+                color: '#fff',
+                fontWeight: 800,
+                fontSize: 14,
+                background: 'linear-gradient(110deg, #2D6A4F, #52B788, #E09F3E, #52B788, #2D6A4F)',
+                backgroundSize: '200% 100%',
+                animation: 'bnb-shimmer 3s linear infinite',
+                boxShadow: 'var(--shadow-float)',
+              }}
+            >
+              Adipoli! Perfect check-in 🎉 Nale kaanam!
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <motion.div variants={stagger} initial="initial" animate="animate" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <motion.div variants={cardAnim}>
@@ -175,6 +336,31 @@ export function CheckInScreen() {
           </motion.div>
         </motion.div>
 
+        {/* Confetti burst overlay */}
+        <AnimatePresence>
+          {confetti && (
+            <div style={{ position: 'fixed', inset: 0, zIndex: 60, pointerEvents: 'none', overflow: 'hidden' }}>
+              {confetti.map(p => (
+                <motion.div
+                  key={p.id}
+                  initial={{ x: 0, y: 0, scale: 0, opacity: 1, rotate: 0 }}
+                  animate={{ x: p.x, y: p.y, scale: 1, opacity: 0, rotate: p.rot }}
+                  transition={{ duration: 1.05, ease: 'easeOut', delay: p.delay }}
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '38%',
+                    width: p.size,
+                    height: p.round ? p.size : p.size * 1.6,
+                    borderRadius: p.round ? '50%' : 3,
+                    background: p.color,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </AnimatePresence>
+
         {/* Saved toast */}
         <AnimatePresence>
           {showSaved && (
@@ -184,7 +370,7 @@ export function CheckInScreen() {
               exit={{ opacity: 0, y: 10 }}
               style={{
                 position: 'fixed',
-                bottom: 88,
+                bottom: 'calc(96px + env(safe-area-inset-bottom))',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 zIndex: 50,

@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
-const WHATS_NEW_KEY = 'whats_new_seen_v1'
+const WHATS_NEW_KEY = 'whats_new_seen_v3'
 
 const UPDATES = [
-  { emoji: '💾', title: 'Save button', desc: 'Changes now buffer locally — tap Save when you\'re done. Update your water count midday, save it, come back later.' },
-  { emoji: '📅', title: 'Calendar updates instantly', desc: 'Yesterday\'s check-in now shows in the calendar the moment you save it.' },
-  { emoji: '💬', title: 'WhatsApp reminders', desc: 'Get a WhatsApp nudge if you forget to log. Set it up in Settings → Reminders.' },
+  { emoji: '🌿', title: 'A whole new look', desc: 'Fresh fonts, a warm garden glow behind every screen, glassier cards, and a polished dark mode. Same app, adipoli new vibe.' },
+  { emoji: '🎉', title: 'Perfect check-in celebrations', desc: 'A new progress meter tracks your 4 daily check-ins — finish all of them and get a confetti party. Nale kaanam!' },
+  { emoji: '🧭', title: 'Floating navigation', desc: 'The nav is now a floating glass pill with a smooth indicator that glides between tabs.' },
+  { emoji: '📊', title: 'Stats that move', desc: 'Numbers count up, charts grow in, badges glow when earned, and your plant now floats on a glowing mound.' },
+  { emoji: '📆', title: 'Smoother calendar', desc: 'Slick month transitions, a pulsing ring on today, and day details in a proper bottom sheet.' },
 ]
 
 export function WhatsNewModal() {
@@ -50,8 +52,8 @@ export function WhatsNewModal() {
                 <Sparkles size={22} color="var(--brand-leaf)" />
               </div>
               <div>
-                <h3 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: 'var(--text-primary)' }}>What's new 🎉</h3>
-                <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary)' }}>Here's what we've been building</p>
+                <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>What's new in v3 🎉</h3>
+                <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary)' }}>The big glow-up update</p>
               </div>
             </div>
 

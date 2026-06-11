@@ -1,4 +1,5 @@
 'use client'
+import { Droplets } from 'lucide-react';
 import { Card } from '@/components/common/Card';
 import { TapCounter } from '@/components/common/TapCounter';
 import type { DailyRecord } from '@/lib/types/records';
@@ -16,12 +17,19 @@ export function HydrationCard({ record, settings, onUpdate }: Props) {
   const met = hasMetWaterGoal(count, settings);
 
   return (
-    <Card>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>Vellam? 💧</h2>
-        {met && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand-leaf)', background: 'rgba(82,183,136,0.15)', borderRadius: 20, padding: '2px 10px' }}>Goal met! 🎯</span>}
+    <Card accent="#48CAE4">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 38, height: 38, borderRadius: 12, background: 'var(--tint-sky)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Droplets size={19} color="#48CAE4" />
+          </div>
+          <div>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>Vellam? 💧</h2>
+            <p style={{ margin: '1px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>Tap the drop to log water</p>
+          </div>
+        </div>
+        {met && <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand-leaf)', background: 'var(--tint-leaf)', borderRadius: 20, padding: '2px 10px', whiteSpace: 'nowrap' }}>Goal met! 🎯</span>}
       </div>
-      <p style={{ margin: '0 0 12px', fontSize: 12, color: 'var(--text-secondary)' }}>Tap the drop to log water</p>
 
       <TapCounter
         value={count}

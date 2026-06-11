@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from 'next'
+import { Fraunces, Nunito } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { SWRProvider } from '@/components/providers/SWRProvider'
 import '../styles/design-system.css'
+
+const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-display', display: 'swap' })
+const nunito = Nunito({ subsets: ['latin'], variable: '--font-body', display: 'swap' })
 
 export const metadata: Metadata = {
   title: 'Bite & Burn',
@@ -19,7 +23,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${fraunces.variable} ${nunito.variable}`}>
       <body>
         <ClerkProvider>
           <SWRProvider>
